@@ -72,3 +72,53 @@ def splitByRegion():
         # Saves the data
         subSet.to_csv('IRAhandle_tweets_' + reg + '.csv')
     return
+
+def splitDFByLanguage( inFrame ):
+    '''
+    Splits the data into dataframes by each region. Returns a dictionary with
+    the language as the key and the subset of that original data as the value.
+    '''
+    outFrame = dict()
+    if not os.path.exists('IRAhandle_tweets_all.csv'):
+        mergeData()
+    data = pd.read_csv('IRAhandle_tweets_all.csv')
+
+    for lang in data.language.unique():
+        # Gets the subset of the data that have the language 
+        subSet = data.where(data.language == lang).dropna(how = 'all')
+        # adds the output dictionary
+        outFrame[lang] = subSet
+    return outFrame
+
+def splitDFByType():
+    '''
+    Splits the data into dataframes based on account type. Returns a dictionary with
+    the type as the key and the subset of that original data as the value.
+    '''
+    outFrame = dict()
+    if not os.path.exists('IRAhandle_tweets_all.csv'):
+        mergeData()
+    data = pd.read_csv('IRAhandle_tweets_all.csv')
+
+    for accType in data.account_type.unique():
+        # Gets the subset of the data that have the type 
+        subSet = data.where(data.account_type == accType).dropna(how = 'all')
+        outFrame[accType] = subSet
+    return outFrame
+
+def splitDFByRegion():
+    '''
+    Splits the data into dataframes based on region. Returns a dictionary with
+    the region as the key and the subset of that original data as the value.
+    '''
+    outFrame = dict()
+    if not os.path.exists('IRAhandle_tweets_all.csv'):
+        mergeData()
+    data = pd.read_csv('IRAhandle_tweets_all.csv')
+
+    for reg in data.region.unique():
+        # Gets the subset of the data that have the region 
+        subSet = data.where(data.region == reg).dropna(how = 'all')
+        # I use str here because the type of reg is somtimes a double?
+        outFrame[str(reg)] = subSet
+    return
