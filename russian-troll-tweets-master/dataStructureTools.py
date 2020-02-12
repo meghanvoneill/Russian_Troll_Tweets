@@ -73,7 +73,7 @@ def splitByRegion():
         subSet.to_csv('IRAhandle_tweets_' + reg + '.csv')
     return
 
-def splitDFByLanguage( inFrame ):
+def splitDFByLanguage(  ):
     '''
     Splits the data into dataframes by each region. Returns a dictionary with
     the language as the key and the subset of that original data as the value.
@@ -90,7 +90,7 @@ def splitDFByLanguage( inFrame ):
         outFrame[lang] = subSet
     return outFrame
 
-def splitDFByType():
+def splitDFByType( ):
     '''
     Splits the data into dataframes based on account type. Returns a dictionary with
     the type as the key and the subset of that original data as the value.
@@ -106,7 +106,7 @@ def splitDFByType():
         outFrame[accType] = subSet
     return outFrame
 
-def splitDFByRegion():
+def splitDFByRegion( ):
     '''
     Splits the data into dataframes based on region. Returns a dictionary with
     the region as the key and the subset of that original data as the value.
@@ -121,4 +121,4 @@ def splitDFByRegion():
         subSet = data.where(data.region == reg).dropna(how = 'all')
         # I use str here because the type of reg is somtimes a double?
         outFrame[str(reg)] = subSet
-    return
+    return outFrame
