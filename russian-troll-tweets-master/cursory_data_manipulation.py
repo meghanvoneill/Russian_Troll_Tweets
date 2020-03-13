@@ -3,17 +3,74 @@ import math
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+import dataStructureTools
 
 _memomask = {}
 
 
 def main():
 
+    k = 2
+    t = 30
+    m = 100000
+    all_k_grams = []
+
+    # data = pd.read_csv('IRAhandle_tweets_all.csv')
+    data = pd.read_csv('IRAhandle_tweets_2.csv')
+
+    for x in range(0, len(data)):
+        tweet = data.loc[x]['content']
+        k_grams_found = k_gram_strings(tweet, k)
+        all_k_grams.append(k_grams_found)
+
+    max_dist = 0
+
+    for i in range(0, len(all_k_grams)):
+        for j in range(0, len(all_k_grams)):
+            if i == j:
+                continue
+            dist = min_hash_dist(all_k_grams[i], all_k_grams[j], m, t)
+
+            if dist > max_dist:
+                max_dist = dist
+                print("input1: " + str(all_k_grams[i]))
+                print("input2: " + str(all_k_grams[j]))
+                print("dist: " + str(dist))
+                print()
+
     return
 
 
 # Takes two tweets and defines min-hash distance.
+def min_hash_dist(input1, input2, m, t):
 
+    input1_mins = min_hash(input1, m, t)
+    input2_mins = min_hash(input2, m, t)
+
+    # dist = 1 - jaccard_similarity(input1_mins, input2_mins)
+    dist = 1 - cumulative_jaccard_similarity(input1_mins, input2_mins, t)
+
+    return dist
+
+
+def min_hash(x, m, t):
+
+    min_found = math.inf
+    x_mins = [0] * len(x)
+
+    for i in range(0, len(x)):
+
+        # Use the hash family of functions to get every hash for this k-gram, x[i].
+        for hash_function_index in range(0, t):
+
+            new_hash = hash_function(i, hash_function_index, m)
+
+            # If the new hash is smaller than the min hash found, update the min hash and store it.
+            if new_hash < min_found:
+                min_found = new_hash
+                x_mins[i] = new_hash
+
+    return x_mins
 
 
 # Given a data set dictionary and a test set size, partitions the data into a
@@ -30,22 +87,17 @@ def build_training_set(data, size_of_test_set):
 
     # Randomly select data for test set.
     while len(test_set.keys()) <= size_of_test_set:
-        random_x = random.choice(list(data.keys()))
+        # Choose from the training set's keys so that the pool of potential options shrinks.
+        random_x = random.choice(list(training_set.keys()))
         test_set[random_x] = data[random_x]
         del training_set[random_x]
 
     return training_set, test_set
 
 
-def k_gram_strings(file_name, k):
+def k_gram_strings(contents, k):
 
     k_grams = []
-    f = open(file_name, "r")
-
-    if f.mode == 'r':
-        contents = f.read()
-    else:
-        return
 
     contents_string_list = contents.split(" ")
     contents_string_list = list(filter(None, contents_string_list))
@@ -61,8 +113,8 @@ def k_gram_strings(file_name, k):
 #   |(A n B)| / |(A u B)|
 def jaccard_similarity(set_A, set_B):
 
-    AnB = set_A.intersection(set_B)
-    AuB = set_A.union(set_B)
+    AnB = set(set_A).intersection(set(set_B))
+    AuB = set(set_A).union(set(set_B))
 
     j_similarity = (len(AnB) / len(AuB))
 
@@ -76,7 +128,6 @@ def cumulative_jaccard_similarity(setA, setB, t):
     for i in range(min(len(setA), len(setB))):
         # If a and b exist, check whether they have the same value.
         if i < len(setA) and i < len(setB):
-            print("a: " + str(setA[i]) + " b: " + str(setB[i]))
             if setA[i] == setB[i]:
                 summation += 1
 
