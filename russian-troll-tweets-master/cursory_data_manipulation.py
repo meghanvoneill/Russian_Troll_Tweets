@@ -4,6 +4,8 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import dataStructureTools
+import sklearn.cluster
+import sklearn.feature_extraction.text as txtvectorizer
 
 _memomask = {}
 
@@ -15,8 +17,8 @@ def main():
     m = 100000
     all_k_grams = []
 
-    # data = pd.read_csv('IRAhandle_tweets_all.csv')
-    data = pd.read_csv('IRAhandle_tweets_2.csv')
+    #data = pd.read_csv('IRAhandle_tweets_all.csv')
+    #data = pd.read_csv('IRAhandle_tweets_2.csv')
 
     for x in range(0, len(data)):
         tweet = data.loc[x]['content']
@@ -152,3 +154,18 @@ def hash_function(x, n, m):
 
 if __name__ == '__main__':
     main()
+    
+
+# Runs the minibatchkmeans algorythm up to 100 times and returns a list 
+# that contains the "inertia" for each size of the cluster, where the batch with
+# n clusters is at index n-1.
+def QuickClusterParamaterFinder(data):
+    Cost = list()
+    vectorizer = txtvectorizer.HashingVectorizer(analyzer= 'char', ngram_range= (2,2))
+    vectors = vectorizer.transform(data['content'].dropna())
+
+    for c in range(1,1):
+        kmeans = sklearn.cluster.MiniBatchKMeans(n_clusters=c)
+        kmeans.fit(vectors)
+        Cost.append(kmeans.inertia_)
+    return Cost
