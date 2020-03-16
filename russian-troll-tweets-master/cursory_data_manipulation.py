@@ -184,11 +184,10 @@ def QuickClusterParamaterFinder(data):
     vectorizer = txtvectorizer.HashingVectorizer(analyzer= 'char', ngram_range= (2,2))
     vectors = vectorizer.transform(data['content'].dropna())
 
-    for c in range(1,100):
+    for c in range(1,80,10):
         kmeans = sklearn.cluster.MiniBatchKMeans(n_clusters=c)
         kmeans.fit(vectors)
         Cost.append(kmeans.inertia_)
-        if c % 5 == 0:
-            print(str(c) + " / 100")
-    plt.plot(range(1,100),Cost)
+        print(str(c) + " / 100")
+    plt.plot(range(1,80,10),Cost)
     return Cost
