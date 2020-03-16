@@ -154,7 +154,27 @@ def hash_function(x, n, m):
 
 if __name__ == '__main__':
     main()
-    
+
+# Fits performs clustering with kmeans on vectorized data
+# as we continue we can add additional argument or paramaters to this 
+# when we get tot he fine tuneing stage.
+def kmeansWrapper(vectorizedData,n_clusters):
+    km = sklearn.cluster.KMeans(n_clusters = n_clusters)
+    km.fit(vectorizedData)
+    return km
+
+# Takes in a pd.series object that represents the tweet contents for the main 
+# data set and a tupple that represents the allowed size of the k-grams used.
+#
+# Returns a matrix where each column represents a unique k-gram and each row 
+# represents a document. All N/A's are filled with the empty string.
+# 
+# This method is essentially a wrapper for the HashingVectorizer class from
+# sklearn.
+def vectorizeStrings(documents, ngramRange):
+    vectorizer = txtvectorizer.HashingVectorizer(analyzer= 'char', ngram_range= ngramRange)
+    vectors = vectorizer.transform(documents.fillna(""))
+    return vectors
 
 # Runs the minibatchkmeans algorythm up to 100 times and returns a list 
 # that contains the "inertia" for each size of the cluster, where the batch with
@@ -164,8 +184,11 @@ def QuickClusterParamaterFinder(data):
     vectorizer = txtvectorizer.HashingVectorizer(analyzer= 'char', ngram_range= (2,2))
     vectors = vectorizer.transform(data['content'].dropna())
 
-    for c in range(1,1):
+    for c in range(1,100):
         kmeans = sklearn.cluster.MiniBatchKMeans(n_clusters=c)
         kmeans.fit(vectors)
         Cost.append(kmeans.inertia_)
+        if c % 5 == 0:
+            print(str(c) + " / 100")
+    plt.plot(range(1,100),Cost)
     return Cost

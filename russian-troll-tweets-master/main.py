@@ -1,4 +1,6 @@
 #%%
+%load_ext autoreload
+%autoreload 2
 import pandas as pd
 import dataStructureTools
 import matplotlib.pyplot as plt
@@ -37,7 +39,9 @@ plt.title('Number of tweets for the year 2018')
 allData['publish_date'].hist(bins = 48) 
 plt.title('Tweets from 2012 to 2018') 
 # %%
-cdm.QuickClusterParamaterFinder(allData)
+subData = allData.sample(frac=0.01)
+#%%
+cdm.QuickClusterParamaterFinder(subData)
 # %%
 
 # %%
