@@ -6,6 +6,7 @@ import numpy as np
 import dataStructureTools
 import sklearn.cluster
 import sklearn.feature_extraction.text as txtvectorizer
+#import sklearn.feature_extraction.text.TfidfVectorizer as txtvectorizer 
 
 _memomask = {}
 
@@ -176,18 +177,25 @@ def vectorizeStrings(documents, ngramRange):
     vectors = vectorizer.transform(documents.fillna(""))
     return vectors
 
+
 # Runs the minibatchkmeans algorythm up to 100 times and returns a list 
 # that contains the "inertia" for each size of the cluster, where the batch with
 # n clusters is at index n-1.
 def QuickClusterParamaterFinder(data):
     Cost = list()
-    vectorizer = txtvectorizer.HashingVectorizer(analyzer= 'char', ngram_range= (2,2))
+    vectorizer = txtvectorizer.HashingVectorizer(analyzer= 'word', ngram_range= (1,10))
     vectors = vectorizer.transform(data['content'].dropna())
 
-    for c in range(1,80,10):
+    for c in range(1,100,5):
         kmeans = sklearn.cluster.MiniBatchKMeans(n_clusters=c)
-        kmeans.fit(vectors)
+        kmeans.fit_transform(vectors)
         Cost.append(kmeans.inertia_)
         print(str(c) + " / 100")
-    plt.plot(range(1,80,10),Cost)
+    plt.plot(range(1,100,5),Cost)
     return Cost
+
+
+# Takes in a pandas data frame that represents the data and returns a new dataframe that
+# with each row labled.
+def ClusterData(data):
+    return
