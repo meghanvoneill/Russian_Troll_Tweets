@@ -38,7 +38,8 @@ def FindNumberOfClusters(dataMatrix):
         else:
             numOfClusters = numOfClusters * 2
 
-
+# The recursive part of te binary search. used in the 
+# FindNumberOfClusters
 def binSearchNumOfClusters(dataMatrix,a,b):
     if b - a < 2:
         return b
@@ -56,7 +57,8 @@ def binSearchNumOfClusters(dataMatrix,a,b):
         else:
             return binSearchNumOfClusters(dataMatrix,a + (b+a)/2, b)
 
-
+# As a sanity check this runs on each individual cluster value 
+# until it finds one with a slope greater than -1.
 def bruteForceNumOfClusterCheck(dataMatrix):
     numbClusters = 2 
     while True: 
