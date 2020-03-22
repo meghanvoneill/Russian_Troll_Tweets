@@ -11,7 +11,7 @@ import ParamaterSelectionExperiments as PSE
 dataStructureTools.mergeData()
 
 # %%
-allData = pd.read_csv('IRAhandle_tweets_all.csv')
+allData = pd.read_csv('IRAhandle_tweets_all.csv',parse_dates=True)
 #%%
 
 allData['publish_date'] = allData['publish_date'].astype('datetime64[ns]') 

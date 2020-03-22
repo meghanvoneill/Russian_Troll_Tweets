@@ -24,19 +24,15 @@ def KGramClusteringExperiement(data):
 # is approxemently -1. With this assumption in mind we can perform a binary 
 # search of sorts and estimate the derivative with f'(x) = f(x+1) - f(x-1) / 2. 
 def FindNumberOfClusters(dataMatrix):
-    numOfClusters = 4 
+    numbClusters = 4 
     while True:
-        X0 = sklearn.cluster.MiniBatchKMeans(n_clusters = numOfClusters - 1) 
-        X2 = sklearn.cluster.MiniBatchKMeans(n_clusters = numOfClusters + 1) 
-        X0.fit_transform(dataMatrix)
-        X2.fit_transform(dataMatrix)
-        fPrimeX1 = (X2.inertia_ - X0.inertia_) / 2
+        fPrimeX1 = dfdxApprox(numbClusters,dataMatrix)
         if abs(fPrimeX1 + 1) < 0.1 :  
-            return numOfClusters
+            return numbClusters
         elif fPrimeX1 > -1:
-                return binSearchNumOfClusters(dataMatrix,int(numOfClusters/2),numOfClusters)
+                return binSearchNumOfClusters(dataMatrix,int(numbClusters/2),numbClusters)
         else:
-            numOfClusters = numOfClusters * 2
+            numbClusters = numbClusters * 2
 
 # The recursive part of te binary search. used in the 
 # FindNumberOfClusters
@@ -44,14 +40,10 @@ def binSearchNumOfClusters(dataMatrix,a,b):
     if b - a < 2:
         return b
     else:
-        numOfClusters = int(b-a / 2)
-        X0 = sklearn.cluster.MiniBatchKMeans(n_clusters = numOfClusters - 1) 
-        X2 = sklearn.cluster.MiniBatchKMeans(n_clusters = numOfClusters + 1) 
-        X0.fit_transform(dataMatrix)
-        X2.fit_transform(dataMatrix)
-        fPrimeX1 = (X2.inertia_ - X0.inertia_ ) / 2
+        numbClusters = int(b-a / 2)
+        fPrimeX1 = dfdxApprox(numbClusters,dataMatrix)
         if abs(fPrimeX1 + 1) < 1 :  
-            return numOfClusters
+            return numbClusters 
         elif fPrimeX1 > -1:
             return binSearchNumOfClusters(dataMatrix,a,a + (b+a)/2)
         else:
@@ -62,13 +54,17 @@ def binSearchNumOfClusters(dataMatrix,a,b):
 def bruteForceNumOfClusterCheck(dataMatrix):
     numbClusters = 2 
     while True: 
-        X0 = sklearn.cluster.MiniBatchKMeans(n_clusters = numbClusters - 1) 
-        X2 = sklearn.cluster.MiniBatchKMeans(n_clusters = numbClusters + 1) 
-        X0.fit_transform(dataMatrix)
-        X2.fit_transform(dataMatrix)
-        fPrimeX1 = (X2.inertia_ - X0.inertia_ ) / 2
+        fPrimeX1 = dfdxApprox(numbClusters,dataMatrix)
         if fPrimeX1 > -1:
             return numbClusters
         numbClusters += 1
 
 
+# Approximates the derivate for the number of clusters n with f'(n) = f(n+1)-f(n-1)/2
+def dfdxApprox(numbClusters, dataMatrix):
+        X0 = sklearn.cluster.MiniBatchKMeans(n_clusters = numbClusters - 1) 
+        X2 = sklearn.cluster.MiniBatchKMeans(n_clusters = numbClusters + 1) 
+        X0.fit_transform(dataMatrix)
+        X2.fit_transform(dataMatrix)
+        fPrimeX1 = (X2.inertia_ - X0.inertia_ ) / 2
+        return fPrimeX1
