@@ -1,0 +1,12 @@
+1. Data flow and visualization?
+    -Preprocessing of that data 
+        - what data to use
+    -Summary statistics?
+    -Transformation into some numeric space 
+    -Fitting of the parameters
+    -Final mining? 
+    -Post visualization and analyse
+
+2. To-DO
+    -Fill out the pipeline files.
+    -Build experiments
