@@ -6,9 +6,8 @@ import csv
 
 # Constants
 TOKEN_TYPE = 'word' # or 'char'
-NGRAM_RANGE = (2,10)
 KGRAM_RANGE= range(2,10)
-DFDX_THRESHOLD = 0.001
+DFDX_THRESHOLD = 0.1
 
 
 # This determines the best cluster over a number of 
@@ -22,7 +21,7 @@ def KGramClusteringExperiment(data):
     for kGram in KGRAM_RANGE:
         # Converts all characters to lowercase before tokenizing, enables inverse-document-frequency reweighting, 
         #   smoothes the idf weights by adding one to document frequencies, and uses the L2 norm.
-        vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer=TOKEN_TYPE,ngram_range=kGram)
+        vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer=TOKEN_TYPE,ngram_range=(kGram,kGram))
         dataMatrix = vectorizer.fit_transform(data['content'])
         clustersForKgram[kGram] = FindNumberOfClusters(dataMatrix) 
         clustersForKgramBrut[kGram] = bruteForceNumOfClusterCheck(dataMatrix)
@@ -39,7 +38,7 @@ def KGramClusteringExperiment(data):
 #   is a point in the intertia function when we plot it w/r to 
 #   the number of clusters in which the slope levels out. 
 # We can assume that the "elbow" lies where the slope of the curve
-#   is approximently -1. With this assumption in mind we can perform a binary 
+#   is approximately -1. With this assumption in mind we can perform a binary 
 #   search of sorts and estimate the derivative with 
 #   f'(x) = f(x+1) - f(x-1) / 2. 
 def FindNumberOfClusters(dataMatrix):
@@ -48,7 +47,7 @@ def FindNumberOfClusters(dataMatrix):
     while True:
         fPrimeX1 = dfdxApprox(numbClusters,dataMatrix)
 
-        if abs(fPrimeX1 + 1) < DFDX_THRESHOLD:  
+        if fPrimeX1 + 1 < DFDX_THRESHOLD:  
             return numbClusters
         elif fPrimeX1 > -1:
                 return binSearchNumOfClusters(dataMatrix,int(numbClusters/2),numbClusters)
@@ -65,7 +64,7 @@ def binSearchNumOfClusters(dataMatrix,a,b):
         numbClusters = int(b-a / 2)
         fPrimeX1 = dfdxApprox(numbClusters,dataMatrix)
 
-        if abs(fPrimeX1 + 1) < 1 :  
+        if fPrimeX1 + 1 < DFDX_THRESHOLD :  
             return numbClusters 
         elif fPrimeX1 > -1:
             return binSearchNumOfClusters(dataMatrix,a,a + (b+a)/2)
@@ -79,7 +78,6 @@ def bruteForceNumOfClusterCheck(dataMatrix):
     numbClusters = 2 
     while True: 
         fPrimeX1 = dfdxApprox(numbClusters,dataMatrix)
-
         if fPrimeX1 > -1:
             return numbClusters
         numbClusters += 1
@@ -88,7 +86,6 @@ def bruteForceNumOfClusterCheck(dataMatrix):
 # Approximates the derivate for the number of clusters n with:
 #   f'(n) = f(n+1)-f(n-1)/2
 def dfdxApprox(numbClusters, dataMatrix):
-
         X0 = sklearn.cluster.KMeans(n_clusters = numbClusters - 1) 
         X2 = sklearn.cluster.KMeans(n_clusters = numbClusters + 1) 
         X0.fit_transform(dataMatrix)
