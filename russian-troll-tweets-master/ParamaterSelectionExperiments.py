@@ -20,15 +20,17 @@ def KGramClusteringExperiment(data):
     clustersForKgramBrut = {}
 
     for kGram in KGRAM_RANGE:
-       vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer=TOKEN_TYPE,ngram_range=kGram)
-       dataMatrix = vectorizer.fit_transform(data['content'])
-       clustersForKgram[kGram] = FindNumberOfClusters(dataMatrix) 
-       clustersForKgramBrut[kGram] = bruteForceNumOfClusterCheck(dataMatrix)
+        # Converts all characters to lowercase before tokenizing, enables inverse-document-frequency reweighting, 
+        #   smoothes the idf weights by adding one to document frequencies, and uses the L2 norm.
+        vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer=TOKEN_TYPE,ngram_range=kGram)
+        dataMatrix = vectorizer.fit_transform(data['content'])
+        clustersForKgram[kGram] = FindNumberOfClusters(dataMatrix) 
+        clustersForKgramBrut[kGram] = bruteForceNumOfClusterCheck(dataMatrix)
 
-    with open('KGramClustResults.csv','wb') as f: 
-        w = csv.DictWriter(f,clustersForKgram.keys())
-        w.writeheader()
-        w.writerow(clustersForKgram)
+    # with open('KGramClustResults.csv','wb') as f: 
+    #     w = csv.DictWriter(f,clustersForKgram.keys())
+    #     w.writeheader()
+    #     w.writerow(clustersForKgram)
 
     print(clustersForKgram)
     print(clustersForKgramBrut)
