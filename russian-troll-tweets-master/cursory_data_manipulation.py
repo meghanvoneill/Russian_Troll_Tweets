@@ -19,7 +19,7 @@ def main():
     all_k_grams = []
 
     #data = pd.read_csv('IRAhandle_tweets_all.csv')
-    #data = pd.read_csv('IRAhandle_tweets_2.csv')
+    data = pd.read_csv('IRAhandle_tweets_2.csv')
 
     for x in range(0, len(data)):
         tweet = data.loc[x]['content']

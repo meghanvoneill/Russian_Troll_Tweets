@@ -6,11 +6,41 @@ import numpy as np
 import dataStructureTools
 import sklearn.cluster
 import sklearn.feature_extraction.text as txtvectorizer
+from scipy import linalg as LA
+
 
 # Constants
 TOKEN_TYPE = 'word' # or 'char'
 KGRAM_RANGE= range(2,10)
 DFDX_THRESHOLD = 0.1
+
+# Takes in a matrix A and an integer k_max
+def find_smallest_k_10(A, percent = 0.10):
+    U, s, Vt = LA.svd(A, full_matrices=False)
+    k_max = len(s)
+    S = np.diag(s)
+    A_norm = LA.norm(A, 2)
+    smallest_k = math.inf
+
+    for k in range(k_max):
+        Uk = U[:, :k]
+        Sk = S[:k, :k]
+        Vtk = Vt[:k, :]
+        Ak = Uk @ Sk @ Vtk
+
+        A_minus_Ak_norm = LA.norm(A-Ak, 2)
+
+        if A_minus_Ak_norm < percent * A_norm:
+            if k < smallest_k:
+                smallest_k = k
+                return smallest_k, Uk, Sk, Vtk, Ak
+            
+    Uk = U[:, :smallest_k]
+    Sk = S[:smallest_k, :smallest_k]
+    Vtk = Vt[:smallest_k, :]
+    Ak = Uk @ Sk @ Vtk
+
+    return smallest_k, Uk, Sk, Vtk, Ak
 
 
 def SimpleKGram(data, data_matrix, number_clusters):
@@ -42,6 +72,7 @@ def KGramClusteringExperiment(data,data_matrix):
     print(clustersForKgram)
     print(clustersForKgramBrut)
 
+
 # With the elbow technique we make the assumptions that there
 #   is a point in the intertia function when we plot it w/r to 
 #   the number of clusters in which the slope levels out. 
@@ -62,6 +93,7 @@ def FindNumberOfClusters(dataMatrix):
         else:
             numbClusters = numbClusters * 2
 
+
 # The recursive part of the binary search. Used in 
 #   conjunction with FindNumberOfClusters.
 def binSearchNumOfClusters(dataMatrix,a,b):
@@ -78,6 +110,7 @@ def binSearchNumOfClusters(dataMatrix,a,b):
             return binSearchNumOfClusters(dataMatrix,a,a + (b+a)/2)
         else:
             return binSearchNumOfClusters(dataMatrix,a + (b+a)/2, b)
+
 
 # As a sanity check this runs on each individual cluster value 
 #   until it finds one with a slope greater than -1.
