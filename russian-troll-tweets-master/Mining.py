@@ -46,8 +46,8 @@ def find_smallest_k_10(A, percent = 0.10):
 def SimpleKGram(data, data_matrix, number_clusters):
     KMean = sklearn.cluster.KMeans(n_clusters = number_clusters) 
     labels = KMean.fit_predict(data_matrix)
-    pd.concat([data, pd.DataFrame(labels)], axis=1)
-    return data
+    labeledData = pd.concat([data, pd.DataFrame(labels)], axis=1)
+    return labeledData
 
 
 # This determines the best cluster over a number of 
