@@ -18,3 +18,6 @@ def save_data():
     return
 
 
+def plot_2D(data, file_name):
+    plt.scatter(data['xcord'],data['ycord'])
+    plt.savefig(file_name)

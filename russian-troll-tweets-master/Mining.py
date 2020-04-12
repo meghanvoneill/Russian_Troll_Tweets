@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import dataStructureTools
 import sklearn.cluster
+import sklearn.decomposition as DC
 import sklearn.feature_extraction.text as txtvectorizer
 from scipy import linalg as LA
 
@@ -14,7 +15,13 @@ TOKEN_TYPE = 'word' # or 'char'
 KGRAM_RANGE= range(2,10)
 DFDX_THRESHOLD = 0.1
 
-def project_to_two_dimensions():
+def project_to_two_dimensions(data, data_matrix):
+    PCA = DC.TruncatedSVD()
+    reducedData = PCA.fit_transform(data_matrix) 
+    labeledData = pd.concat([data, pd.DataFrame(reducedData[:,0],columns = ['xcord'])], axis=1)
+    labeledData = pd.concat([labeledData, pd.DataFrame(reducedData[:,1],columns = ['ycord'])], axis=1)
+    return labeledData
+
 
 # Takes in a matrix A and an integer k_max
 def find_smallest_k_10(A, percent = 0.10):

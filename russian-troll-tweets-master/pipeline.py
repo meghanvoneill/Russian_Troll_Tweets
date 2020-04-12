@@ -17,8 +17,15 @@ def simple_clustering_pipeline():
 def visualize_clustering():
     data, dataMatrix = PreProcessing.pre_process((2,3)) 
     labledData = Mining.SimpleKGram(data,dataMatrix,20)
-     
+
+
+def clusters_in_two_dim():
+    data, dataMatrix = PreProcessing.pre_process((2,3)) 
+    labledData = Mining.SimpleKGram(data,dataMatrix,20)
+    labledData = Mining.project_to_two_dimensions(labledData,dataMatrix)
+    PostAnalysis.plot_2D(labledData,'2dPlotSimpleClusteringk20.png')
+    labledData.to_csv('simpleClusteringK20WithCords.csv')
 
 
 if __name__ == '__main__':
-    simple_clustering_pipeline()
+    clusters_in_two_dim()
