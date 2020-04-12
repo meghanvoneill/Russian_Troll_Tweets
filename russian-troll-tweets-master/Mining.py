@@ -14,6 +14,8 @@ TOKEN_TYPE = 'word' # or 'char'
 KGRAM_RANGE= range(2,10)
 DFDX_THRESHOLD = 0.1
 
+def project_to_two_dimensions():
+
 # Takes in a matrix A and an integer k_max
 def find_smallest_k_10(A, percent = 0.10):
     U, s, Vt = LA.svd(A, full_matrices=False)
@@ -47,6 +49,7 @@ def SimpleKGram(data, data_matrix, number_clusters):
     KMean = sklearn.cluster.KMeans(n_clusters = number_clusters) 
     labels = KMean.fit_predict(data_matrix)
     labeledData = pd.concat([data, pd.DataFrame(labels)], axis=1)
+    labeledData = labeledData.rename(columns = {'0': 'Cluster'})
     return labeledData
 
 
