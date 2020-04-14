@@ -16,11 +16,11 @@ KGRAM_RANGE= range(2,10)
 DFDX_THRESHOLD = 0.1
 
 def project_to_two_dimensions(data, data_matrix):
-    PCA = DC.TruncatedSVD()
+    PCA = DC.TruncatedSVD(n_components=2)
     reducedData = PCA.fit_transform(data_matrix) 
-    labeledData = pd.concat([data, pd.DataFrame(reducedData[:,0],columns = ['xcord'])], axis=1)
-    labeledData = pd.concat([labeledData, pd.DataFrame(reducedData[:,1],columns = ['ycord'])], axis=1)
-    return labeledData
+    data = pd.concat([data, pd.DataFrame(reducedData[:,0],columns = ['xcord'])], axis=1)
+    data = pd.concat([data, pd.DataFrame(reducedData[:,1],columns = ['ycord'])], axis=1)
+    return data 
 
 
 # Takes in a matrix A and an integer k_max
@@ -55,9 +55,9 @@ def find_smallest_k_10(A, percent = 0.10):
 def SimpleKGram(data, data_matrix, number_clusters):
     KMean = sklearn.cluster.KMeans(n_clusters = number_clusters) 
     labels = KMean.fit_predict(data_matrix)
-    labeledData = pd.concat([data, pd.DataFrame(labels)], axis=1)
-    labeledData = labeledData.rename(columns = {'0': 'Cluster'})
-    return labeledData
+    data = pd.concat([data, pd.DataFrame(labels)], axis=1)
+    data.rename(columns = {'0': 'Cluster'},inplace = True)
+    return 
 
 
 # This determines the best cluster over a number of 

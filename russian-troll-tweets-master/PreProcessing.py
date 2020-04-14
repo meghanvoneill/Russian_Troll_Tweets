@@ -15,6 +15,15 @@ def pre_process(kGram, token_type='word', file_name = 'SubdataSample.csv'):
 
     data = pd.read_csv(file_name, parse_dates = True)
     vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer=token_type,ngram_range=kGram)
+    data.dropna(subset = ['content'],inplace = True)
     dataMatrix = vectorizer.fit_transform(data['content'])
 
+    return data, dataMatrix
+
+def pre_process_content_only(kGram, token_type='word', file_name = 'SubdataSample.csv'):
+
+    data = pd.read_csv(file_name, parse_dates = True, usecols = ['content'])
+    vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer=token_type,ngram_range=kGram)
+    data.dropna(subset = ['content'],inplace = True)
+    dataMatrix = vectorizer.fit_transform(data['content'])
     return data, dataMatrix
