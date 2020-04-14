@@ -61,7 +61,7 @@ def SimpleKGram(data, data_matrix, number_clusters):
 
 
 # This determines the best cluster over a number of 
-#   different k-gram paramaters for characters and words. 
+#   different k-gram parameters for characters and words.
 # Saves the results as a csv file.
 def KGramClusteringExperiment(data,data_matrix):
 
