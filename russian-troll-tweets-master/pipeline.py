@@ -7,7 +7,7 @@ import ParamaterSelectionExperiments as PSE
 import PreProcessing
 import Mining
 import PostAnalysis
-
+import dataStructureTools
 def simple_clustering_pipeline():
 
     data, dataMatrix, features = PreProcessing.pre_process((2,3)) 
@@ -34,13 +34,27 @@ def visualize_clustering(clusters):
 
 
 def clusters_in_two_dim():
-    data, dataMatrix, features= PreProcessing.pre_process_content_only((1,1)) 
-    Mining.SimpleKGram(data,dataMatrix,20)
+    data, dataMatrix = PreProcessing.pre_process_content_only((2,2),file_name = 'IRAhandle_tweets_all.csv') 
+    print('PreProcessing Done')
+    #Mining.SimpleKGram(data,dataMatrix,4)
     data = Mining.project_to_two_dimensions(data,dataMatrix)
-    PostAnalysis.plot_2D(data,'2dPlotSimpleClusteringk20.png')
+    print('Mining Done')
+    PostAnalysis.plot_2D(data,'2dPlotSimpleClusteringCR22.png')
     data.to_csv('simpleClusteringK20WithCords.csv')
 
+def clusters_in_two_dim_no_url():
+    data, dataMatrix, features= PreProcessing.pre_process_content_only_no_url((2,2),file_name = 'IRAhandle_tweets_all.csv') 
+    print('PreProcessing Done')
+    #Mining.SimpleKGram(data,dataMatrix,4)
+    data = Mining.project_to_two_dimensions(data,dataMatrix)
+    print('Mining Done')
+    PostAnalysis.plot_2D(data,'2dPlotSimpleClusteringCR22.png')
+    data.to_csv('simpleClusteringK20WithCords.csv')
 
+# In hide sight this should proably be in datastructure tools.
+def save_striped_URL():
+    data, dataMatrix, features = PreProcessing.pre_process_content_only_no_url((2,2),file_name='IRAhandle_tweets_all.csv')
+    data.to_csv('IRAhandle_tweets_all_no_url.csv') 
 
 if __name__ == '__main__':
-    clusters_in_two_dim()
+    save_striped_URL()
