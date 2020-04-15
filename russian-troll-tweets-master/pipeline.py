@@ -8,6 +8,16 @@ import PreProcessing
 import Mining
 import PostAnalysis
 import dataStructureTools
+
+
+def main():
+    clusters = 20
+
+    save_striped_URL()
+    clusters_in_two_dim_no_url()
+    visualize_clustering(clusters)
+
+
 def simple_clustering_pipeline():
 
     data, dataMatrix, features = PreProcessing.pre_process((2,3)) 
@@ -27,8 +37,7 @@ def visualize_clustering(clusters):
     first_vector_tfidfvectorizer = dataMatrix[0]
 
     # place tf-idf values in a pandas data frame
-    df = pd.DataFrame(first_vector_tfidfvectorizer.T.todense(), index=vectorizer.get_feature_names(),
-                      columns=["tfidf"])
+    df = pd.DataFrame(first_vector_tfidfvectorizer.T.todense(), features, columns=["tfidf"])
     df.sort_values(by=["tfidf"], ascending=False)
     print(df)
 
@@ -57,4 +66,4 @@ def save_striped_URL():
     data.to_csv('IRAhandle_tweets_all_no_url.csv') 
 
 if __name__ == '__main__':
-    save_striped_URL()
+    main()
