@@ -8,38 +8,52 @@ import PreProcessing
 import Mining
 import PostAnalysis
 import dataStructureTools
+from nltk.tokenize import word_tokenize
 
 
 def main():
     clusters = 20
 
-    save_striped_URL()
-    clusters_in_two_dim_no_url()
+    #dataStructureTools.mergeData()
+    #dataStructureTools.save_CSV_remove_URLs('IRAhandle_tweets_all.csv', 'IRAhandle_tweets_all_no_url.csv')
+    #clusters_in_two_dim_no_url()
     visualize_clustering(clusters)
 
 
 def simple_clustering_pipeline():
 
-    data, dataMatrix, features = PreProcessing.pre_process((2,3)) 
+    data, dataMatrix, features = PreProcessing.pre_process((2,3))
     labledData = Mining.SimpleKGram(data,dataMatrix,20)
     labledData.to_csv('simpleClusteringK20.csv')
 
 
 
 def visualize_clustering(clusters):
-    data, dataMatrix, features = PreProcessing.pre_process((2,3))
-    labledData = Mining.SimpleKGram(data,dataMatrix,clusters)
-
-    # Getting top ranking features
+    # data, dataMatrix, features = PreProcessing.pre_process_content_only((2,2), file_name='IRAhandle_tweets_all_no_url.csv')
+    data, dataMatrix, features = PreProcessing.pre_process_content_only((2,2), file_name='IRAhandle_tweets_1.csv')
+    Mining.SimpleKGram(data, dataMatrix, clusters)
 
 
     # get the first vector out (for the first document)
-    first_vector_tfidfvectorizer = dataMatrix[0]
+    # first_vector_tfidfvectorizer = dataMatrix[0]
 
     # place tf-idf values in a pandas data frame
-    df = pd.DataFrame(first_vector_tfidfvectorizer.T.todense(), features, columns=["tfidf"])
-    df.sort_values(by=["tfidf"], ascending=False)
-    print(df)
+    # df = pd.DataFrame(first_vector_tfidfvectorizer.T.todense(), features, columns=["tfidf"])
+    # df.sort_values(by=["tfidf"], ascending=False)
+    # print(df)
+
+    print(dataMatrix)
+    #print(dataMatrix[0].split(',')[1])
+    #weights = [(dataMatrix[0].split(',')[1], dataMatrix[1]) for pair in dataMatrix]
+    all_text = ''
+    for t in data['content']:
+        if data['0'] == 4:
+            all_text += ' '.join(t)
+            print(t)
+    print('all_text created')
+    PostAnalysis.make_wordcloud(all_text, 'IRAhandle_tweets_1.csv - Cluster 4')
+
+
 
 
 def clusters_in_two_dim():

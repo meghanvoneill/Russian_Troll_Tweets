@@ -5,6 +5,8 @@ a single csv file as well as subsets based on location and language.
 
 import pandas as pd
 import os.path
+import re
+import csv
 
 def mergeData():
     '''
@@ -122,3 +124,27 @@ def splitDFByRegion( ):
         # I use str here because the type of reg is somtimes a double?
         outFrame[str(reg)] = subSet
     return outFrame
+
+
+def save_CSV_remove_URLs(file_name, new_file_name):
+
+    new_data = []
+
+    with open(file_name, 'r') as f:
+        data = csv.DictReader(f)
+
+        for i, line in enumerate(data):
+            if i == 0:
+                fields = data.fieldnames
+
+            line['content'] = re.sub(r"http\S+", '', line['content'])
+            new_data.append(line)
+
+            if i % 25000 == 0:
+                print('i: ' + str(i) + '  new content: ' + str(line['content']))
+
+        with open(new_file_name, 'w', newline='') as g:
+            print(fields)
+            writer = csv.DictWriter(g, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(new_data)

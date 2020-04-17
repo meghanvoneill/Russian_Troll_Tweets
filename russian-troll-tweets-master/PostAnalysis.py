@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 
 
-def make_wordcloud(words,title):
+def make_wordcloud(words, title):
+
     cloud = WordCloud(width=1920, height=1080,max_font_size=200, max_words=300, background_color="white").generate(words)
     plt.figure(figsize=(20,20))
     plt.imshow(cloud, interpolation="gaussian")
@@ -19,5 +20,5 @@ def save_data():
 
 
 def plot_2D(data, file_name):
-    plt.scatter(data['xcord'],data['ycord'])
+    plt.scatter(data['xcord'],data['ycord'], marker='o')
     plt.savefig(file_name)
