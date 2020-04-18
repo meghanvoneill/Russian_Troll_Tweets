@@ -34,27 +34,41 @@ def visualize_clustering(clusters):
 
 
 def clusters_in_two_dim():
-    data, dataMatrix = PreProcessing.pre_process_content_only((2,2),file_name = 'IRAhandle_tweets_all.csv') 
+    kgram = (1,5)
+    data, dataMatrix = PreProcessing.pre_process_content_only(kgram,token_type='char') 
     print('PreProcessing Done')
-    #Mining.SimpleKGram(data,dataMatrix,4)
+    data = Mining.SimpleKGram_minibatch(data,dataMatrix,15)
     data = Mining.project_to_two_dimensions(data,dataMatrix)
     print('Mining Done')
-    PostAnalysis.plot_2D(data,'2dPlotSimpleClusteringCR22.png')
-    data.to_csv('simpleClusteringK20WithCords.csv')
+    data.to_csv('charGramTest.csv')
+    PostAnalysis.plot_2D(data,'charGramPlot' + str(kgram[0])+ str(kgram[1])+ '.png')
+    PostAnalysis.plot_hist_clusters(data,'charGramHist.png')
+
 
 def clusters_in_two_dim_no_url():
-    data, dataMatrix, features= PreProcessing.pre_process_content_only_no_url((2,2),file_name = 'IRAhandle_tweets_all.csv') 
+    kgram = (2,2)
+    data, dataMatrix, features= PreProcessing.pre_process_content_only_no_url(kgram) 
     print('PreProcessing Done')
-    #Mining.SimpleKGram(data,dataMatrix,4)
+    reducedDataMatrix = Mining.ReduceDim(dataMatrix)
+    data = Mining.SimpleKGram(data,reducedDataMatrix,4)
     data = Mining.project_to_two_dimensions(data,dataMatrix)
     print('Mining Done')
-    PostAnalysis.plot_2D(data,'2dPlotSimpleClusteringCR22.png')
+    PostAnalysis.plot_2D(data,'2dPlotSimpleClusteringNoUrlK' + str(kgram[0])+ str(kgram[1])+ '.png')
     data.to_csv('simpleClusteringK20WithCords.csv')
+
 
 # In hide sight this should proably be in datastructure tools.
 def save_striped_URL():
-    data, dataMatrix, features = PreProcessing.pre_process_content_only_no_url((2,2),file_name='IRAhandle_tweets_all.csv')
-    data.to_csv('IRAhandle_tweets_all_no_url.csv') 
+    PreProcessing.strip_urls_and_save('IRAhandle_tweets_all_stripped.csv',file_name= 'IRAhandle_tweets_all.csv')
+
+def hist_cluster_from_file():
+    clustered_data = pd.read_csv('MiniBatchDimRedAllData15k23.csv')
+    all_data = pd.read_csv('SubdataSample.csv',usecols=['publish_date'])
+    data = pd.concat([all_data,clustered_data['Cluster']], axis=1)
+    data['publish_date'] = pd.to_datetime(data['publish_date'],infer_datetime_format=True)
+    data.dropna(how = 'any', subset = ['publish_date','Cluster'],inplace = True)
+    PostAnalysis.plot_hist_clusters(data,'allData15k23Hist.png')
+
 
 if __name__ == '__main__':
-    save_striped_URL()
+    hist_cluster_from_file()

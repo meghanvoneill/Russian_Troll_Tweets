@@ -3,6 +3,8 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+import matplotlib.dates as mdates
+import pandas as pd
 
 
 def make_wordcloud(words,title):
@@ -19,5 +21,20 @@ def save_data():
 
 
 def plot_2D(data, file_name):
-    plt.scatter(data['xcord'],data['ycord'])
+    plt.figure()
+    groups = data.groupby('Cluster')
+    for name, group in groups:
+        plt.scatter(group['xcord'], group['ycord'],marker='o', label=name)
+    plt.legend()
     plt.savefig(file_name)
+
+def plot_hist_clusters(data,file_name):
+    groups = data.groupby('Cluster')
+    for name , group in groups:
+        plt.hist(group['publish_date'],label = name, histtype= 'step',bins = 'auto',stacked=True)
+    plt.title('Clusters Over Time')
+    plt.savefig(file_name)
+    
+    
+    
+    

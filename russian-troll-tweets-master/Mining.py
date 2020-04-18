@@ -55,9 +55,22 @@ def find_smallest_k_10(A, percent = 0.10):
 def SimpleKGram(data, data_matrix, number_clusters):
     KMean = sklearn.cluster.KMeans(n_clusters = number_clusters) 
     labels = KMean.fit_predict(data_matrix)
-    data = pd.concat([data, pd.DataFrame(labels)], axis=1)
-    data.rename(columns = {'0': 'Cluster'},inplace = True)
-    return 
+    labels = pd.DataFrame(labels,columns = ['Cluster'])
+    data = pd.concat([data, labels], axis=1)
+    return data 
+
+def SimpleKGram_minibatch(data, data_matrix, number_clusters):
+    KMean = sklearn.cluster.MiniBatchKMeans(n_clusters = number_clusters) 
+    labels = KMean.fit_predict(data_matrix)
+    labels = pd.DataFrame(labels,columns = ['Cluster'])
+    data = pd.concat([data, labels], axis=1)
+    return data 
+
+def ReduceDim(data_matrix):
+    TSVD = DC.TruncatedSVD(n_components = 100)
+    reducedData = TSVD.fit_transform(data_matrix) 
+    return reducedData
+
 
 
 # This determines the best cluster over a number of 
@@ -143,3 +156,11 @@ def dfdxApprox(numbClusters, dataMatrix):
         X2.fit_transform(dataMatrix)
         fPrimeX1 = (X2.inertia_ - X0.inertia_ ) / 2
         return fPrimeX1
+
+def clusters_in_two_dim_all_data():
+    data, dataMatrix= PreProcessing.pre_process_with_url((1,3)) 
+    data = Mining.SimpleKGram(data,dataMatrix,20)
+    data = Mining.project_to_two_dimensions(data,dataMatrix)
+    PostAnalysis.plot_2D(data,'2dPlotSimpleClusteringk20.png')
+    PostAnalysis.plot_hist_clusters(data,'subsetClusterHistk2C20.png')
+    data.to_csv('simpleClusteringK20WithCords.csv')

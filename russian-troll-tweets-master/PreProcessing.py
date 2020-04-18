@@ -37,10 +37,17 @@ def pre_process_content_only_no_url(kGram, token_type='word', file_name = 'Subda
     return data, dataMatrix, features
 
 def pre_process_content_only(kGram, token_type='word', file_name = 'SubdataSample.csv'):
-
-    data = pd.read_csv(file_name, parse_dates = True, usecols = ['content'])
+    data = pd.read_csv(file_name, parse_dates = True, usecols = ['content','publish_date'])
     vectorizer = sklearn.feature_extraction.text.TfidfVectorizer(analyzer=token_type,ngram_range=kGram)
     data.dropna(subset = ['content'],inplace = True)
     dataMatrix = vectorizer.fit_transform(data['content'])
     return data, dataMatrix
+
+def strip_urls_and_save(output_file_name,file_name = 'SubdataSample.csv'):
+    data = pd.read_csv(file_name, parse_dates = True, usecols = ['content'])
+    # Remove URLs from the data first
+    for t in range(data.shape[0]):
+        data['content'].loc[t] = re.sub(r"http\S+", '', data['content'][t])
+    data.dropna(subset = ['content'],inplace = True)
+    data.to_csv(output_file_name)
 
